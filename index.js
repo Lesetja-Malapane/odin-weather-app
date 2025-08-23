@@ -1,8 +1,23 @@
 console.log("Hello, world");
 const weatherDiv = document.getElementById("weather-conditions");
-const container = document.querySelector(".container");
+const container = document.body;
+const form = document.querySelector("form");
+const inputCity = document.getElementById("city");
 
 const weather_crossing_api_key = "HVLE4KL3U5FZXW3LW55V46T8V";
+
+
+// default weather place
+let hello = useApi("johanesburg");
+hello.then((message) => showCurrentWeatherConditions(message));
+
+function toCelsius(fahrenheit) {
+  return parseInt((fahrenheit - 32) / 1.8)
+}
+
+function mphToKph(mph) {
+  return parseInt(mph * 1.609344 )
+}
 
 async function useApi(location) {
   let my_url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=${weather_crossing_api_key}`;
@@ -11,72 +26,48 @@ async function useApi(location) {
   const weatherInfo = await data.json();
 
   return weatherInfo;
-  // return new Promise((resolve) => {
-  //   if (my_url != null) {
-  //     const response = fetch(my_url, { mode: "cors" });
-  //     resolve(response);
-  //   }
-  // }).then(function(message) {return message.json()})
-  // // .then(data => console.log(data));
 }
 
 function changeBackground(datetime) {
   const time = datetime.split(":")[0];
 
   if (parseInt(time >= 17)) {
-    container.id = "evening"
-  } else if (time > 0 && time < 12) {
-    container.id = "afternoon"
+    container.id = "evening";
+  } else if (time < 17 && time > 12) {
+    container.id = "afternoon";
   } else {
-    container.id = "morning"
+    container.id = "morning";
   }
 }
 
-function printCurrentWeatherConditions(jsonMessage) {
-  // place
-  console.log(`${jsonMessage.address}`);
+function showCurrentWeatherConditions(jsonMessage) {
 
-  // Humidity
-  console.log(`Humidity: ${jsonMessage.currentConditions.humidity}%`);
-
-  // Wind Conditions
-  console.log(`Wind: ${jsonMessage.currentConditions.windspeed} mph`);
-  
-  // current conditions
-  console.log(
-    `Weather Conditions: ${jsonMessage.currentConditions.conditions}`
-  );
-  
-  // all data
-  console.log(jsonMessage);
-
-  // today's date
-  console.log(jsonMessage.days[0].datetime);
-
-  // Current temp
-  console.log(`Current Tempreture: ${jsonMessage.currentConditions.temp} °F`);
-
+  changeBackground(jsonMessage.currentConditions.datetime);
+  weatherDiv.textContent = "";
 
   const location = document.createElement("h3");
-  location.textContent = jsonMessage.address;
+  location.textContent = `${jsonMessage.address} (${container.id})`;
   location.id = "location";
-
 
   const conditions = document.createElement("h1");
   conditions.textContent = jsonMessage.currentConditions.conditions;
   conditions.id = "conditions";
 
   const moreConditions = document.createElement("p");
-  moreConditions.textContent = `Temp: ${jsonMessage.currentConditions.temp} °F   Humidity: ${jsonMessage.currentConditions.humidity}%    Wind: ${jsonMessage.currentConditions.windspeed} mph`;
-  moreConditions.id = "moreConditions"
+  moreConditions.textContent = `Temp: ${toCelsius(jsonMessage.currentConditions.temp)} °C   Humidity: ${jsonMessage.currentConditions.humidity}%    Wind: ${mphToKph(jsonMessage.currentConditions.windspeed)} kph`;
+  moreConditions.id = "moreConditions";
 
-  weatherDiv.appendChild(location)
-  weatherDiv.appendChild(conditions)
-  weatherDiv.appendChild(moreConditions)
-
-  changeBackground(jsonMessage.currentConditions.datetime)
+  weatherDiv.appendChild(location);
+  weatherDiv.appendChild(conditions);
+  weatherDiv.appendChild(moreConditions);
 }
 
-let hello = useApi("brisbane");
-console.log(hello.then((message) => printCurrentWeatherConditions(message)));
 
+form.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    inputCity.value = inputCity.value.replace(" ", "%20");
+    let response = useApi(inputCity.value.toLowerCase());
+    response.then((message) => showCurrentWeatherConditions(message));
+  }
+});
