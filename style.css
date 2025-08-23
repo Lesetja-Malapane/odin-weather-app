@@ -1,5 +1,6 @@
 :root {
     --morning-background-image: url("./img/wallpaperflare.com_wallpaper.jpg");
+    --afternoon-background-image: url("./img/wallpaperflare.com_wallpaper_afternoon.jpg");
     --night-background-image: url("./img/stars-in-sky-dark-1920x1080-15485.jpg");
 }
 
@@ -8,8 +9,17 @@
     margin: 0;
 }
 
+#morning {
+    background-image: var(--morning-background-image);
+}
+
+#evening {
+    background-image: var(--night-background-image);
+}
+
 .container {
     height: 100vh;
+    width: 100vw;
     display: flex;
     align-items: center;
     padding-left:300px;
