@@ -33,7 +33,7 @@ function changeBackground(datetime) {
 
   if (parseInt(time >= 17)) {
     container.id = "evening";
-  } else if (time < 17 && time > 12) {
+  } else if (parseInt(time) < 17 && parseInt(time) > 12) {
     container.id = "afternoon";
   } else {
     container.id = "morning";
