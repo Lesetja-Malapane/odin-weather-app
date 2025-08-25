@@ -48,7 +48,7 @@ function showCurrentWeatherConditions(jsonMessage) {
   weatherDiv.textContent = "";
 
   const location = document.createElement("h3");
-  location.textContent = `${jsonMessage.address} (${container.id})`;
+  location.textContent = `${jsonMessage.resolvedAddress}`;
   location.id = "location";
 
   const conditions = document.createElement("h1");
