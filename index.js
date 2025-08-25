@@ -42,6 +42,8 @@ function changeBackground(datetime) {
 
 function showCurrentWeatherConditions(jsonMessage) {
 
+  console.log(jsonMessage);
+
   changeBackground(jsonMessage.currentConditions.datetime);
   weatherDiv.textContent = "";
 
